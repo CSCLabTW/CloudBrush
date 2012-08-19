@@ -1,0 +1,48 @@
+2012 (c) CloudBrush, developed by Chien-Chih Chen (rocky@iis.sinica.edu.tw), 
+released under Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
+
+More details about CloudBrush Project you can get at: https://github.com/ice91/CloudBrush
+
+Some files of CloudBrush Project are derived from Contrail Project 
+on SourceForge under Apache License 2.0.
+
+The Contrail Project is developed by Michael Schatz, Jeremy Chambers, Avijit Gupta, 
+Rushil Gupta, David Kelley, Jeremy Lewi, Deepak Nettem, Dan Sommer, Mihai Pop, 
+Schatz Lab and Cold Spring Harbor Laboratory.
+
+More information about Contrail Project you can find at: 
+http://sourceforge.net/apps/mediawiki/contrail-bio/
+
+The file names of the derived files from Contrail Project are listed as below:
+
+// Top-Level Main
+BrushAssembler.java
+BrushConfig.java
+
+// Data Structure 
+Node.java
+TailInfo.java
+
+// Analysis
+Stats.java
+
+//Path Compression
+Compressible.java
+PairMark.java
+PairMerge.java
+QuickMark.java
+QuickMerge.java
+
+//Bubbles Removal 
+FindBubbles.java
+PopBubbles.java
+
+//Tips Removal
+TipsRemoval.java
+
+//Low Coverage Node Removal
+RemoveLowCoverage.java
+
+//Graph to Fasta
+Graph2Fasta.java
+

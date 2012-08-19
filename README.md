@@ -1,11 +1,11 @@
 CloudBrush
 ==========================================
 
-CloudBrush is a de novo genome assembler based on the string graph and mapreduce framework. 
-It is derived from Contrail Project on SourceForge, released under Apache License 2.0 
-(http://www.apache.org/licenses/LICENSE-2.0)
+CloudBrush is a de novo genome assembler based on the string graph and mapreduce framework, 
+it is released under Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0) 
+as a Free and Open Source Software Project.
 
-More information about Contrail Project you can find under: http://sourceforge.net/apps/mediawiki/contrail-bio/
+More details about CloudBrush Project you can get under: https://github.com/ice91/CloudBrush
 
 --------
 requirement: hadoop cluster

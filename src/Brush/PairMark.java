@@ -1,14 +1,13 @@
 /*
     PairMark.java
-    Author: Chien-Chih Chen (rocky@iis.sinica.edu.tw)
+    2012 Ⓒ CloudBrush, developed by Chien-Chih Chen (rocky@iis.sinica.edu.tw), 
+    released under Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0) 
+    at: https://github.com/ice91/CloudBrush
 
-    This file is derived from Contrail Project on SourceForge, 
-    released under Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0), 
-    developed by Michael Schatz, Jeremy Chambers, Avijit Gupta, Rushil Gupta, 
-    David Kelley, Jeremy Lewi, Deepak Nettem, Dan Sommer, and Mihai Pop, 
-    Schatz Lab and Cold Spring Harbor Laboratory.
-
-    More information about Contrail Project you can find under: 
+    The file is derived from Contrail Project which is developed by Michael Schatz, 
+    Jeremy Chambers, Avijit Gupta, Rushil Gupta, David Kelley, Jeremy Lewi, 
+    Deepak Nettem, Dan Sommer, Mihai Pop, Schatz Lab and Cold Spring Harbor Laboratory, 
+    and is released under Apache License 2.0 at: 
     http://sourceforge.net/apps/mediawiki/contrail-bio/
 */
 
