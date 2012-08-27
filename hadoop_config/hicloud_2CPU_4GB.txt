@@ -1,0 +1,23 @@
+/etc/hadoop/mapred-site.xml 
+mapred.tasktracker.map.tasks.maximum=1
+mapred.tasktracker.reduce.tasks.maximum=1
+io.file.buffer.size=65536
+mapred.map.tasks.speculative.execution=false
+mapred.reduce.tasks.speculative.execution=false
+mapred.compress.map.output=true
+mapred.reduce.slowstart.completed.maps=0.6
+mapred.child.java.opts=-Xmx1100m
+mapred.reduce.parallel.copies=10
+io.sort.mb=640
+io.sort.factor=64
+
+/etc/hadoop/conf/hadoop-env.sh 
+export HADOOP_HEAPSIZE=1120
+export HADOOP_NAMENODE_OPTS="-Dcom.sun.management.jmxremote $HADOOP_NAMENODE_OPTS"
+export HADOOP_DATANODE_OPTS="-Dcom.sun.management.jmxremote -Xmx560m $HADOOP_DATANODE_OPTS"
+export HADOOP_JOBTRACKER_OPTS="-Dcom.sun.management.jmxremote -Xmx1680m $HADOOP_JOBTRACKER_OPTS"
+export HADOOP_TASKTRACKER_OPTS="-Dcom.sun.management.jmxremote -Xmx560m  $HADOOP_TASKTRACKER_OPTS"
+
+/etc/hadoop/hdfs-site.xml
+dfs.replication=2
+dfs.block.size=134217728
