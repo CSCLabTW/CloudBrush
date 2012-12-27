@@ -27,6 +27,7 @@ public class BrushConfig {
     // important paths
 	public static String hadoopReadPath = null;
 	public static String hadoopBasePath = null;
+	public static String hadoopTmpPath = null;
 	public static String localBasePath = "work";
 
 	// hadoop options
@@ -98,6 +99,7 @@ public class BrushConfig {
         if (err > 0) { System.exit(1); }
         if (!hadoopBasePath.endsWith("/")) { hadoopBasePath += "/"; }
 		if (!localBasePath.endsWith("/"))  { localBasePath += "/"; }
+		hadoopTmpPath = hadoopBasePath.substring(0, hadoopBasePath.length()-1) + ".tmp" + "/";
 	}
 
     public static void initializeConfiguration(JobConf conf)

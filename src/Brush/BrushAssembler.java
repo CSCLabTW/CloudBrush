@@ -28,6 +28,7 @@ import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
@@ -47,6 +48,22 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.TTCCLayout;
 import org.apache.log4j.helpers.DateLayout;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+//\\
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+//import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 public class BrushAssembler extends Configured implements Tool
 {
@@ -163,11 +180,13 @@ public class BrushAssembler extends Configured implements Tool
 
 	public void convertFasta(String basePath, String graphdir, String fastadir) throws Exception
 	{
-        Graph2Fasta g2f = new Graph2Fasta();
+		Graph2Fasta g2f = new Graph2Fasta();
         CountReads cr = new CountReads();
 		start("convertFasta " + graphdir);
-		RunningJob job = g2f.run(basePath + graphdir, basePath + fastadir);
-		end(job);
+		RunningJob job = g2f.run(basePath + graphdir, fastadir);
+        FileSystem.get(baseconf).rename(new Path(basePath+"/jpeg"), new Path(fastadir.substring(0,fastadir.length()-1) +"_jpeg"));
+        FileSystem.get(baseconf).delete(new Path(basePath), true);
+        end(job);
         msg("\n");
 	}
 
@@ -187,13 +206,52 @@ public class BrushAssembler extends Configured implements Tool
 		FSDataInputStream statstream = FileSystem.get(baseconf).open(new Path(base+dir+".stats/part-00000"));
 		BufferedReader b = new BufferedReader(new InputStreamReader(statstream));
 
-		String s;
+		//\\declare bar data
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        //\\
+        String s;
 		while ((s = b.readLine()) != null)
 		{
+            //\\ input bar data
+            //\\
+            if (s.charAt(0) == '>'){
+                String[] vals = s.substring(0).split("\t");
+                //dataset.addValue((long)Double.parseDouble(vals[3]), "Mean", vals[0]);
+                dataset.addValue((long)Double.parseDouble(vals[4]), "N50", vals[0]);
+               
+                //dataset.addValue(Integer.parseInt(vals[1]), "Cnt", vals[0]);
+                
+            }
 			msg(s);
 			msg("\n");
 		}
 		msg("\n");
+        //\\ build bar chart
+        JFreeChart jfreechart = ChartFactory.createBarChart(
+            "Summary",       // chart title
+            "Contig Size Cutoff",               // domain axis label
+            "N50 (bp)",                  // range axis label
+            dataset,                  // data
+            PlotOrientation.HORIZONTAL, // the plot orientation
+            true,                    // include legend
+            true,
+            false
+        );
+        //\\
+        //CategoryAxis axis = plot.getDomainAxis(); //x轴
+        //axis.setMaximumCategoryLabelLines(10);  //标题行数，每个字显示一行
+        //axis.setMaximumCategoryLabelWidthRatio(0.5f);  //每个标题宽度，控制为1个字的宽度
+        
+        //\\
+        //FileOutputStream fos_jpg = null;
+		try {			
+			//fos_jpg = new FileOutputStream("c:\\Pie.jpg");
+            FSDataOutputStream fos_jpg = FileSystem.get(baseconf).create(new Path(base+"jpeg/stats.jpg"),true);
+			ChartUtilities.writeChartAsJPEG(fos_jpg,0.99f,jfreechart,480,320,null);
+			fos_jpg.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
     
     // preprocess
@@ -619,19 +677,6 @@ public class BrushAssembler extends Configured implements Tool
 	{
         RunningJob job;
         RemoveLowCoverage rlc = new RemoveLowCoverage();
-        //\\\\\\\\\\\\
-        /*start("\n  Define Consensus");
-        DefineConsensus dc = new DefineConsensus();
-        job = dc.run(basePath + nobubblescmp, basePath + nobubblescmp + ".dc");
-        end(job);
-        start("\n  Count Braids");
-        CountBraid cb = new CountBraid();
-        job = cb.run(basePath + nobubblescmp + ".dc", basePath + nobubblescmp + ".cb");
-        long nodes = counter(job, "nodes");
-        long edges = counter(job, "edges");
-        long braids = counter(job, "braids");
-        msg("  " + braids + " braids  " + nodes + " nodes  " + edges + " edges");
-        end(job);*/
         start("\n  Remove Low Coverage");
         job = rlc.run(basePath + nobubblescmp, basePath + lowcov);
         end(job);
@@ -649,20 +694,6 @@ public class BrushAssembler extends Configured implements Tool
 		{
 			save_result(basePath, lowcov, lowcovcmp);
 		}
-        //\\\\\\\\\\\\\\
-        /*start("\n  Define Consensus");
-        //DefineConsensus dc = new DefineConsensus();
-        job = dc.run(basePath + lowcovcmp, basePath + lowcovcmp + ".dc");
-        end(job);
-        start("\n  Count Braids");
-        //CountBraid cb = new CountBraid();
-        job = cb.run(basePath + lowcovcmp + ".dc", basePath + lowcovcmp + ".cb");
-        nodes = counter(job, "nodes");
-        edges = counter(job, "edges");
-        braids = counter(job, "braids");
-        msg("  " + braids + " braids  " + nodes + " nodes  " + edges + " edges\n");
-        end(job);
-        msg("\n");*/
 	}
 
     public void pairedgeAdjustment(String basePath, String current, String prefix, String finalname) throws Exception
@@ -792,44 +823,44 @@ public class BrushAssembler extends Configured implements Tool
             if (runStage("preprocess"))
 			{
                 GCstarttime = System.currentTimeMillis();
-				preprocess(BrushConfig.hadoopReadPath, BrushConfig.hadoopBasePath, preprocess);
+				preprocess(BrushConfig.hadoopReadPath, BrushConfig.hadoopTmpPath, preprocess);
 				checkDone();
 			}
             // Build overlap graph
             if (runStage("buildOverlap"))
 			{
-				buildOverlap(BrushConfig.hadoopReadPath, BrushConfig.hadoopBasePath, preprocess, overlap);
-				computeStats(BrushConfig.hadoopBasePath, overlap);
+				buildOverlap(BrushConfig.hadoopReadPath, BrushConfig.hadoopTmpPath, preprocess, overlap);
+				computeStats(BrushConfig.hadoopTmpPath, overlap);
 				checkDone();
 			}
             // Build string graph
             if (runStage("buildString"))
 			{
-				buildStringGraph(BrushConfig.hadoopReadPath, BrushConfig.hadoopBasePath, overlap, string);
+				buildStringGraph(BrushConfig.hadoopReadPath, BrushConfig.hadoopTmpPath, overlap, string);
                 GCendtime = System.currentTimeMillis();
-				computeStats(BrushConfig.hadoopBasePath, string);
+				computeStats(BrushConfig.hadoopTmpPath, string);
 				checkDone();
 			}
 
 			if (runStage("removeTips"))
 			{
                 GSstarttime = System.currentTimeMillis();
-				removeTips(BrushConfig.hadoopBasePath, string, notips, notipscmp);
-				computeStats(BrushConfig.hadoopBasePath, notipscmp);
+				removeTips(BrushConfig.hadoopTmpPath, string, notips, notipscmp);
+				computeStats(BrushConfig.hadoopTmpPath, notipscmp);
 				checkDone();
 			}
 
             if (runStage("popBubbles"))
 			{
-				popallbubbles(BrushConfig.hadoopBasePath, notipscmp, nobubbles, nobubblescmp);
-				computeStats(BrushConfig.hadoopBasePath, nobubblescmp);
+				popallbubbles(BrushConfig.hadoopTmpPath, notipscmp, nobubbles, nobubblescmp);
+				computeStats(BrushConfig.hadoopTmpPath, nobubblescmp);
 				checkDone();
 			} 
   
             if (runStage("lowcov"))
 			{
-				removelowcov(BrushConfig.hadoopBasePath, nobubblescmp, lowcov, lowcovcmp);
-                computeStats(BrushConfig.hadoopBasePath, lowcovcmp);
+				removelowcov(BrushConfig.hadoopTmpPath, nobubblescmp, lowcov, lowcovcmp);
+                computeStats(BrushConfig.hadoopTmpPath, lowcovcmp);
 				checkDone();
 			}
             
@@ -843,15 +874,15 @@ public class BrushAssembler extends Configured implements Tool
             
             if (runStage("adjustedges"))
 			{
-				edgeAdjustment(BrushConfig.hadoopBasePath, lowcovcmp, edgeadjust, edgeadjustcmp);
+				edgeAdjustment(BrushConfig.hadoopTmpPath, lowcovcmp, edgeadjust, edgeadjustcmp);
                 GSendtime = System.currentTimeMillis();
-				computeStats(BrushConfig.hadoopBasePath, edgeadjustcmp);
+				computeStats(BrushConfig.hadoopTmpPath, edgeadjustcmp);
 				checkDone();
 			}
             
 			if (runStage("convertFasta"))
 			{
-				convertFasta(BrushConfig.hadoopBasePath, edgeadjustcmp, finalcmp + ".fa");
+				convertFasta(BrushConfig.hadoopTmpPath, edgeadjustcmp, BrushConfig.hadoopBasePath);
 				checkDone();
 			}
 		}

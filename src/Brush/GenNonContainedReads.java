@@ -61,7 +61,7 @@ public class GenNonContainedReads extends Configured implements Tool
 		{
 			String[] fields = nodetxt.toString().split("\t");
 
-			if (fields.length != 2)
+			if (fields.length != 2 && fields.length != 3 )
 			{
 				//System.err.println("Warning: invalid input: \"" + nodetxt.toString() + "\"");
 				reporter.incrCounter("Brush", "input_lines_invalid", 1);
