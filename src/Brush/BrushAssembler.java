@@ -48,22 +48,17 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.TTCCLayout;
 import org.apache.log4j.helpers.DateLayout;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
 
-//\\
+/*
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
-//import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
+*/
 
 public class BrushAssembler extends Configured implements Tool
 {
@@ -184,8 +179,8 @@ public class BrushAssembler extends Configured implements Tool
         CountReads cr = new CountReads();
 		start("convertFasta " + graphdir);
 		RunningJob job = g2f.run(basePath + graphdir, fastadir);
-        FileSystem.get(baseconf).rename(new Path(basePath+"/jpeg"), new Path(fastadir.substring(0,fastadir.length()-1) +"_jpeg"));
-        FileSystem.get(baseconf).delete(new Path(basePath), true);
+        //FileSystem.get(baseconf).rename(new Path(basePath+"/jpeg"), new Path(fastadir.substring(0,fastadir.length()-1) +"_jpeg"));
+        //FileSystem.get(baseconf).delete(new Path(basePath), true);
         end(job);
         msg("\n");
 	}
@@ -207,7 +202,7 @@ public class BrushAssembler extends Configured implements Tool
 		BufferedReader b = new BufferedReader(new InputStreamReader(statstream));
 
 		//\\declare bar data
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        //DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         //\\
         String s;
 		while ((s = b.readLine()) != null)
@@ -217,7 +212,7 @@ public class BrushAssembler extends Configured implements Tool
             if (s.charAt(0) == '>'){
                 String[] vals = s.substring(0).split("\t");
                 //dataset.addValue((long)Double.parseDouble(vals[3]), "Mean", vals[0]);
-                dataset.addValue((long)Double.parseDouble(vals[4]), "N50", vals[0]);
+                //dataset.addValue((long)Double.parseDouble(vals[4]), "N50", vals[0]);
                
                 //dataset.addValue(Integer.parseInt(vals[1]), "Cnt", vals[0]);
                 
@@ -227,7 +222,7 @@ public class BrushAssembler extends Configured implements Tool
 		}
 		msg("\n");
         //\\ build bar chart
-        JFreeChart jfreechart = ChartFactory.createBarChart(
+        /*JFreeChart jfreechart = ChartFactory.createBarChart(
             "Summary",       // chart title
             "Contig Size Cutoff",               // domain axis label
             "N50 (bp)",                  // range axis label
@@ -236,7 +231,7 @@ public class BrushAssembler extends Configured implements Tool
             true,                    // include legend
             true,
             false
-        );
+        );*/
         //\\
         //CategoryAxis axis = plot.getDomainAxis(); //x轴
         //axis.setMaximumCategoryLabelLines(10);  //标题行数，每个字显示一行
@@ -244,14 +239,14 @@ public class BrushAssembler extends Configured implements Tool
         
         //\\
         //FileOutputStream fos_jpg = null;
-		try {			
+		/*try {			
 			//fos_jpg = new FileOutputStream("c:\\Pie.jpg");
             FSDataOutputStream fos_jpg = FileSystem.get(baseconf).create(new Path(base+"jpeg/stats.jpg"),true);
 			ChartUtilities.writeChartAsJPEG(fos_jpg,0.99f,jfreechart,480,320,null);
 			fos_jpg.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
     
     // preprocess

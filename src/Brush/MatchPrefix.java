@@ -93,11 +93,11 @@ public class MatchPrefix extends Configured implements Tool
                     int overlap_size_f = node.len() - i;
                     int overlap_size_r = node.len() - i;
                     //int overlap_size_r = node.len() - i;
-                    if (overlap_size_f >= K && overlap_size_f <= node.len() && !window_tmp.matches("A*") && !window_tmp.matches("T*") ) {
+                    if (overlap_size_f >= K && overlap_size_f <= node.len() && !window_tmp.matches("A*") && !window_tmp.matches("T*") && !window_tmp.equals(window_r_tmp)) {
                         output.collect(new Text(window),
                                        new Text(node.getNodeId() + "\t" + "f" + "\t" + Node.SUFFIXMSG + "\t" + overlap_size_f + "\t" + node.cov()));
                     }
-                    if (overlap_size_r >= K && overlap_size_r <= node.len() && !window_tmp.matches("A*") && !window_tmp.matches("T*") ) {
+                    if (overlap_size_r >= K && overlap_size_r <= node.len() && !window_r_tmp.matches("A*") && !window_r_tmp.matches("T*")&& !window_tmp.equals(window_r_tmp) ) {
                         output.collect(new Text(window_r),
                                        new Text(node.getNodeId() + "\t" + "r" + "\t" + Node.SUFFIXMSG + "\t" + overlap_size_r + "\t" + node.cov()));
                     }
