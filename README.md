@@ -5,7 +5,7 @@ CloudBrush is a de novo genome assembler based on the string graph and mapreduce
 it is released under Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0) 
 as a Free and Open Source Software Project.
 
-More details about CloudBrush Project you can get under: https://github.com/ice91/CloudBrush
+More details about CloudBrush Project can be found at https://github.com/ice91/CloudBrush
 
 --------
 requirement: hadoop cluster
