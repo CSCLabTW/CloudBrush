@@ -234,9 +234,9 @@ public class VerifyOverlap extends Configured implements Tool
 				}
 			}
             //\\ two brush
-			if (sawnode != 2)
+			if (sawnode != 1 && sawnode != 2)
 			{
-				throw new IOException("ERROR: Didn't see exactly 2 nodemsg (" + sawnode + ") for " + nodeid.toString());
+				throw new IOException("ERROR: Didn't see exactly 1 && 2 nodemsg (" + sawnode + ") for " + nodeid.toString());
 			}
 
             //\\ store confirmed edges

@@ -76,7 +76,7 @@ public class BrushConfig {
 
     // kmer status
     public static long LOW_KMER = 1;
-    public static long UP_KMER = 200;
+    public static long UP_KMER = 2000;
 
     // stats
 	public static String RUN_STATS = null;

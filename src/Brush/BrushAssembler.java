@@ -49,6 +49,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.TTCCLayout;
 import org.apache.log4j.helpers.DateLayout;
 
+
 /*
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -85,6 +86,7 @@ public class BrushAssembler extends Configured implements Tool
     static String edgeadjust = "09-edgeadjust";
     static String edgeadjustcmp = "10-edgeadjustcmp";
     static String finalcmp     = "99-final";
+    static String stopwords = "stopwords";
     
 
     // Message Management
@@ -251,7 +253,7 @@ public class BrushAssembler extends Configured implements Tool
     
     // preprocess
 	///////////////////////////////////////////////////////////////////////////
-    public void preprocess(String inputPath, String basePath, String preprocess) throws Exception
+    public void preprocess(String inputPath, String basePath, String preprocess, String hkmerlist) throws Exception
 	{
 		RunningJob job;
         //long trans_edge = 0;
@@ -285,7 +287,15 @@ public class BrushAssembler extends Configured implements Tool
         long redundant = counter(job, "redundant");
         nodecnt      = counter(job, "nodes");
         msg("  " + redundant + " redundants " + nodecnt + " nodes");      
-        start("\n  Count Kmer");
+        
+        start("\n  Build High Frequency Kmer List");
+        BuildHighKmerList bhk = new BuildHighKmerList();
+        job = bhk.run(basePath + preprocess, basePath + hkmerlist);
+        end(job);
+        long hkmer = counter(job, "hkmer");
+        msg(" H_kmer: " + hkmer);
+        msg("\n");
+        /*start("\n  Count Kmer");
         CountKmer ck = new CountKmer();
         job = ck.run(basePath + preprocess+ ".0", basePath + preprocess + ".kmer");
         end(job);
@@ -295,21 +305,22 @@ public class BrushAssembler extends Configured implements Tool
         start("\n  Kmer Status");
         KmerStatus ks = new KmerStatus();
         job = ks.run(basePath + preprocess + ".kmer", basePath + preprocess + ".kmer.stats");
-        end(job);
-        msg("\n");
+        end(job);*/
 	}
     
      // build Overlap graph
 	///////////////////////////////////////////////////////////////////////////
-    public void buildOverlap(String inputPath, String basePath, String preprocess, String overlap) throws Exception
+    public void buildOverlap(String inputPath, String basePath, String preprocess, String overlap, String hkmerlist) throws Exception
 	{
         RunningJob job;
         //long trans_edge = 0;
         msg("\nBuild Overlap Graph:");
         start("\n  Match Prefix");
         MatchPrefix mp = new MatchPrefix();
-        job = mp.run(basePath + preprocess, basePath + preprocess + ".prefix", 1, 1, 1);
+        job = mp.run(basePath + preprocess, basePath + preprocess + ".prefix", basePath + hkmerlist);
         end(job);
+        long hkmer = counter(job, "hkmer");
+        msg(" " +  hkmer + " HKmer_skip\n" );
         start("\n  Verify Overlap");
         VerifyOverlap vo = new VerifyOverlap();
         job = vo.run(basePath + preprocess + ".prefix", basePath + preprocess + ".vo");
@@ -818,13 +829,13 @@ public class BrushAssembler extends Configured implements Tool
             if (runStage("preprocess"))
 			{
                 GCstarttime = System.currentTimeMillis();
-				preprocess(BrushConfig.hadoopReadPath, BrushConfig.hadoopTmpPath, preprocess);
+				preprocess(BrushConfig.hadoopReadPath, BrushConfig.hadoopTmpPath, preprocess, stopwords);
 				checkDone();
 			}
             // Build overlap graph
             if (runStage("buildOverlap"))
 			{
-				buildOverlap(BrushConfig.hadoopReadPath, BrushConfig.hadoopTmpPath, preprocess, overlap);
+				buildOverlap(BrushConfig.hadoopReadPath, BrushConfig.hadoopTmpPath, preprocess, overlap, stopwords);
 				computeStats(BrushConfig.hadoopTmpPath, overlap);
 				checkDone();
 			}
