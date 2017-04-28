@@ -25,6 +25,7 @@ https://github.com/ice91/ReadStackCorrector)
 step 3 perform the CloudBrush using hadoop cluster
 
 e.g. hadoop jar CloudBrush.jar -reads Ec10k -asm Ec10k_Brush -k 21 -readlen 36
+e.g. hadoop jar CloudBrush.jar -reads Ec10k -asm Ec10k_Brush -k 21 -readlen 36 -javaopts -Djava.util.Arrays.useLegacyMergeSort=True
 
 step 4 download *.fasta from HDFS
 
