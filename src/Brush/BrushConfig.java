@@ -35,7 +35,7 @@ public class BrushConfig {
 	public static int    HADOOP_REDUCERS   = 50;
 	public static int    HADOOP_LOCALNODES = 1000;
 	public static long   HADOOP_TIMEOUT    = 0;
-	public static String HADOOP_JAVAOPTS   = "-Xmx4000m";
+	public static String HADOOP_JAVAOPTS   = "";
 
 	// Assembler options
 	public static String STARTSTAGE = null;
@@ -111,6 +111,11 @@ public class BrushConfig {
 		conf.set("mapred.child.java.opts", HADOOP_JAVAOPTS);
 		conf.set("mapred.task.timeout", Long.toString(HADOOP_TIMEOUT));
 		conf.setLong("LOCALNODES", HADOOP_LOCALNODES);
+
+		// TODO: try to fix the workaround of Haddop 2
+		conf.set("mapred.child.java.opts", HADOOP_JAVAOPTS + " -Djava.util.Arrays.useLegacyMergeSort=true");
+		conf.set("mapreduce.map.java.opts", "-Djava.util.Arrays.useLegacyMergeSort=true");
+		conf.set("mapreduce.reduce.java.opts", "-Djava.util.Arrays.useLegacyMergeSort=true");
 
 
         conf.setLong("UP_KMER", UP_KMER);
